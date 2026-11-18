@@ -1,0 +1,41 @@
+{% extends 'refining/base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'refining:product_list' %}">Продукты</a> / {{ product.name }}</nav>
+
+<div class="page-header">
+    <div>
+        <h1>{{ product.name }}</h1>
+        <p class="muted"><span class="badge badge-green">{{ product.get_category_display }}</span></p>
+    </div>
+    {% if user.is_authenticated %}
+    <a href="{% url 'refining:product_update' product.pk %}" class="btn btn-outline">Редактировать</a>
+    {% endif %}
+</div>
+
+<div class="stats-grid compact">
+    <div class="stat-card"><div class="stat-value">{{ product.density|default:"—" }}</div><div class="stat-label">Плотность, кг/м³</div></div>
+    <div class="stat-card"><div class="stat-value">{{ batches|length }}</div><div class="stat-label">Партий в выборке</div></div>
+</div>
+
+{% if product.description %}
+<section class="card"><div class="card-body"><p>{{ product.description|linebreaks }}</p></div></section>
+{% endif %}
+
+<section class="card">
+    <div class="card-header"><h2>Партии выпуска</h2></div>
+    <div class="table-wrap">
+        <table class="table">
+            <thead><tr><th>Дата</th><th>НПЗ</th><th>Сырьё</th><th>Продукт, т</th><th>Выход</th></tr></thead>
+            <tbody>
+                {% for b in batches %}
+                <tr><td>{{ b.produced_at|date:"d.m.Y" }}</td><td>{{ b.refinery.name }}</td><td>{{ b.crude_oil.name }}</td><td>{{ b.output_volume|floatformat:2 }}</td><td><span class="badge badge-green">{{ b.yield_percent|floatformat:2 }}%</span></td></tr>
+                {% empty %}
+                <tr><td colspan="5" class="muted">Партий пока нет.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

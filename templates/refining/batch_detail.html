@@ -1,0 +1,36 @@
+{% extends 'refining/base.html' %}
+{% block title %}Партия {{ batch.pk }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumbs"><a href="{% url 'refining:batch_list' %}">Партии</a> / Партия №{{ batch.pk }}</nav>
+
+<div class="page-header">
+    <div>
+        <h1>Партия переработки №{{ batch.pk }}</h1>
+        <p class="muted">Дата переработки: {{ batch.produced_at|date:"d.m.Y" }}</p>
+    </div>
+    <div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'refining:batch_update' batch.pk %}" class="btn btn-outline">Редактировать</a>
+        <a href="{% url 'refining:batch_delete' batch.pk %}" class="btn btn-danger">Удалить</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="card">
+    <div class="card-header"><h2>Параметры партии</h2></div>
+    <div class="detail-grid">
+        <div class="detail-item"><span>НПЗ</span><strong><a href="{{ batch.refinery.get_absolute_url }}">{{ batch.refinery.name }}</a></strong></div>
+        <div class="detail-item"><span>Марка сырой нефти</span><strong><a href="{% url 'refining:crudeoil_detail' batch.crude_oil.pk %}">{{ batch.crude_oil.name }}</a></strong></div>
+        <div class="detail-item"><span>Технологическая установка</span><strong>{{ batch.unit.name }} ({{ batch.unit.get_process_type_display }})</strong></div>
+        <div class="detail-item"><span>Получаемый продукт</span><strong><a href="{% url 'refining:product_detail' batch.product.pk %}">{{ batch.product.name }}</a></strong></div>
+        <div class="detail-item"><span>Объём сырья</span><strong>{{ batch.input_volume|floatformat:2 }} т</strong></div>
+        <div class="detail-item"><span>Объём продукта</span><strong>{{ batch.output_volume|floatformat:2 }} т</strong></div>
+        <div class="detail-item"><span>Выход продукта</span><strong><span class="badge badge-green">{{ batch.yield_percent|floatformat:2 }}%</span></strong></div>
+        <div class="detail-item"><span>Добавил</span><strong>{{ batch.created_by|default:"система" }}</strong></div>
+    </div>
+    {% if batch.notes %}
+    <div class="card-body"><p class="muted">Примечание: {{ batch.notes|linebreaksbr }}</p></div>
+    {% endif %}
+</section>
+{% endblock %}

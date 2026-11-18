@@ -1,0 +1,16 @@
+{% extends 'refining/base.html' %}
+{% block title %}Удаление партии{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>Удалить партию №{{ batch.pk }}?</h1>
+    <p class="muted">Продукт: <strong>{{ batch.product.name }}</strong> · {{ batch.input_volume|floatformat:2 }} т сырья от {{ batch.produced_at|date:"d.m.Y" }}. Это действие нельзя отменить.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Да, удалить</button>
+            <a href="{% url 'refining:batch_list' %}" class="btn btn-outline">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

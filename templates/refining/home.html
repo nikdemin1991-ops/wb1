@@ -1,0 +1,58 @@
+{% extends 'refining/base.html' %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<h2>Обзор</h2>
+<div class="stats-grid">
+    <div class="stat-card">
+        <p><strong>НПЗ в учёте:</strong></p>
+        <span class="stat-value">{{ refineries_count }}</span>
+    </div>
+    <div class="stat-card">
+        <p><strong>Переработано сырья:</strong></p>
+        <span class="stat-value">{{ total_input|floatformat:2 }} т</span>
+    </div>
+</div>
+
+<h3>Последние партии</h3>
+<div class="card">
+    {% if recent_batches %}
+    <div class="table-wrap">
+        <table>
+            <tr><th>Дата</th><th>НПЗ</th><th>Сырьё</th><th>Продукт</th><th>Сырьё, т</th><th>Выход</th></tr>
+            {% for b in recent_batches %}
+            <tr>
+                <td>{{ b.produced_at|date:"d.m.Y" }}</td>
+                <td>{{ b.refinery.name }}</td>
+                <td>{{ b.crude_oil.name }}</td>
+                <td><a href="{{ b.get_absolute_url }}">{{ b.product.name }}</a></td>
+                <td>{{ b.input_volume|floatformat:2 }}</td>
+                <td><span class="badge badge-green">{{ b.yield_percent|floatformat:2 }}%</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p class="muted">Партий пока нет.</p>
+    {% endif %}
+</div>
+
+<h3>Переработка по НПЗ</h3>
+<div class="card">
+    {% if by_refinery %}
+    <div class="table-wrap">
+        <table>
+            <tr><th>НПЗ</th><th>Всего сырья, т</th></tr>
+            {% for row in by_refinery %}
+            <tr>
+                <td>{{ row.refinery__name }}</td>
+                <td>{{ row.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p class="muted">Данных пока нет.</p>
+    {% endif %}
+</div>
+{% endblock %}
